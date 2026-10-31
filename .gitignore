@@ -1,0 +1,16 @@
+# Secrets
+.env
+
+# Virtual environment
+.venv/
+
+# Decks and .bib files (made when the tools run)
+data/
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+ 
+*.pdf
