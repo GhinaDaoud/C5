@@ -14,7 +14,7 @@ The Part 1 summary is in [SUMMARY.md](SUMMARY.md). The reflection is in [REFLECT
 
 ## Demo video
 
-[Add the link to the demo video here.]
+recorded through WebEx [will add link when the platform makes it available from cloud]
 
 ## The three tools
 
