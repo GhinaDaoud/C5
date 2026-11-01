@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research briefing: 2D Gaussian splatting</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6a64; --line: #dedcd3;
+  --accent: #2f5bd3; --accent-soft: #e6ecfb; --chip: #efeee8;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #151614; --panel: #1f201d; --text: #ecebe6; --muted: #a3a29b; --line: #34352f;
+          --accent: #8aa7ff; --accent-soft: #263055; --chip: #2a2b27; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text);
+       font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+.slide { position: absolute; inset: 0 0 64px 0; padding: 48px max(16px, calc((100vw - 1040px) / 2));
+         overflow-y: auto; opacity: 0; visibility: hidden; transform: translateX(24px);
+         transition: opacity .25s ease, transform .25s ease, visibility .25s; }
+.slide.active { opacity: 1; visibility: visible; transform: none; }
+.title-slide { display: flex; flex-direction: column; justify-content: center; }
+h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+h2 { font-size: clamp(24px, 3.4vw, 36px); line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 12px; }
+.kicker { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+          font-size: 13px; margin: 0 0 10px; }
+.lead { font-size: 22px; margin: 0 0 8px; }
+.muted, .meta { color: var(--muted); }
+.meta { margin: 0 0 18px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 28px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+        color: var(--muted); font-size: 14px; }
+.stat span { display: block; font-size: 26px; font-weight: 700; color: var(--text); }
+.two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; }
+.chart { width: 100%; height: auto; }
+.chart-label { fill: var(--text); font-size: 13px; }
+.chart-value { fill: var(--muted); font-size: 12px; }
+.chart-bar { fill: var(--accent); }
+.topics { list-style: none; padding: 0; margin: 0; }
+.topics li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.topics b { display: inline-block; min-width: 42px; color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { background: var(--chip); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+.chip.soft { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+blockquote { margin: 0 0 20px; padding: 18px 22px; background: var(--accent-soft); border-radius: 10px;
+             border-left: 4px solid var(--accent); font-size: 19px; }
+.label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+         color: var(--accent); margin-bottom: 6px; }
+details { margin: 0 0 20px; }
+summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+details p { color: var(--muted); max-width: 75ch; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px;
+      overflow-x: auto; font-size: 13px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 18px; }
+.button { display: inline-block; background: var(--panel); color: var(--text); border: 1px solid var(--line);
+          border-radius: 8px; padding: 8px 14px; font: inherit; font-size: 15px; text-decoration: none;
+          cursor: pointer; }
+.button:hover { border-color: var(--accent); color: var(--accent); }
+.refs li { margin-bottom: 8px; }
+nav { position: fixed; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center;
+      justify-content: center; gap: 16px; border-top: 1px solid var(--line); background: var(--bg); }
+nav .button { min-width: 44px; }
+#counter { min-width: 64px; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+#progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width .25s; }
+@media (max-width: 720px) {
+  .slide { padding-top: 28px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .slide, #progress { transition: none; } }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<main>
+<section class="slide title-slide">
+  <p class="kicker">Research briefing</p>
+  <h1>2D Gaussian splatting</h1>
+  <p class="lead">5 papers · 2024–2026 · 15 citations in total</p>
+  <p class="muted">Made on 01 November 2026 from OpenAlex data. Use ← → or the buttons below.</p>
+</section>
+<section class="slide">
+  <p class="kicker">At a glance</p>
+  <h2>The papers in this briefing</h2>
+  <div class="stats">
+    <div class="stat"><span>5</span>papers</div>
+    <div class="stat"><span>2024–2026</span>years</div>
+    <div class="stat"><span>15</span>citations</div>
+    <div class="stat"><span>4/5</span>free PDFs</div>
+  </div>
+  <div class="two-col">
+    <div><h3>Citations</h3><svg class="chart" viewBox="0 0 640 176" role="img" aria-label="Citations per paper"><text class="chart-label" x="0" y="21">1. Robust LiDAR-Camera Calibration W…</text><rect class="chart-bar" x="250" y="8" width="320" height="18" rx="3"><title>Robust LiDAR-Camera Calibration With 2D Gaussian Splatting: 7 citations</title></rect><text class="chart-value" x="578" y="21">7 · 2025</text><text class="chart-label" x="0" y="55">2. Introducing Unbiased Depth into 2…</text><rect class="chart-bar" x="250" y="42" width="137" height="18" rx="3"><title>Introducing Unbiased Depth into 2D Gaussian Splatting for High‐accuracy Surface Reconstruction: 3 citations</title></rect><text class="chart-value" x="395" y="55">3 · 2025</text><text class="chart-label" x="0" y="89">3. Lightweight contour-aware 2D Gaus…</text><rect class="chart-bar" x="250" y="76" width="46" height="18" rx="3"><title>Lightweight contour-aware 2D Gaussian splatting under Plant-to-Camera: 1 citations</title></rect><text class="chart-value" x="304" y="89">1 · 2026</text><text class="chart-label" x="0" y="123">4. Satellite-GS: Enhanced 2D Gaussia…</text><rect class="chart-bar" x="250" y="110" width="46" height="18" rx="3"><title>Satellite-GS: Enhanced 2D Gaussian Splatting for Robust Satellite Reconstruction: 1 citations</title></rect><text class="chart-value" x="304" y="123">1 · 2026</text><text class="chart-label" x="0" y="157">5. 2D Gaussian Splatting for Image C…</text><rect class="chart-bar" x="250" y="144" width="137" height="18" rx="3"><title>2D Gaussian Splatting for Image Compression: 3 citations</title></rect><text class="chart-value" x="395" y="157">3 · 2024</text></svg></div>
+    <div><h3>Shared topics</h3>
+      <ul class="topics"><li><b>3/5</b> 3D Surveying and Cultural Heritage</li><li><b>3/5</b> Advanced Vision and Imaging</li><li><b>3/5</b> 3D Shape Modeling and Analysis</li><li><b>1/5</b> Robotics and Sensor-Based Localization</li><li><b>1/5</b> Computer Graphics and Visualization Techniques</li><li><b>1/5</b> Smart Agriculture and AI</li></ul>
+    </div>
+  </div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 1 of 5</p>
+  <h2>Robust LiDAR-Camera Calibration With 2D Gaussian Splatting</h2>
+  <p class="meta">Shuyi Zhou, Shuxiang Xie, Ryoichi Ishikawa et al. · IEEE Robotics and Automation Letters · 2025</p>
+  <div class="chips">
+    <span class="chip"><b>7</b> citations</span>
+    <span class="chip"><b>3.5</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Robotics and Sensor-Based Localization</span><span class="chip soft">3D Surveying and Cultural Heritage</span><span class="chip soft">Advanced Vision and Imaging</span>
+  </div>
+  <blockquote><span class="label">Key point</span>Recognizing that 2D Gaussian Splatting (2DGS) can reconstruct geometric information from camera image sequences, we propose a calibration method that estimates LiDAR-camera extrinsic parameters using geometric constraints.</blockquote>
+  <details><summary>Show the abstract</summary><p>LiDAR-camera systems have become increasingly popular in robotics recently. A critical and initial step in integrating the LiDAR and camera data is the calibration of the LiDAR-camera system. Most existing calibration methods rely on auxiliary target objects, which often involve complex manual operations, whereas targetless methods have yet to achieve practical effectiveness. Recognizing that 2D Gaussian Splatting (2DGS) can reconstruct geometric information from camera image sequences, we propose a calibration method that estimates LiDAR-camera extrinsic parameters using geometric constraints. The proposed method begins by reconstructing colorless 2DGS using LiDAR point clouds. Subsequently, we update the colors of the Gaussian splats by minimizing the photometric loss. The extrinsic parameters are optimized during this process. Additionally, we address the limitations of the photometric loss by incorporating the reprojection and triangulation losses, thereby enhancing the calibration robustness and accuracy.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1109/lra.2025.3552955" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://doi.org/10.1109/lra.2025.3552955" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1109/lra.2025.3552955" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 2 of 5</p>
+  <h2>Introducing Unbiased Depth into 2D Gaussian Splatting for High‐accuracy Surface Reconstruction</h2>
+  <p class="meta">Yixin Yang, Yang Zhou, Hui Huang · Computer Graphics Forum · 2025</p>
+  <div class="chips">
+    <span class="chip"><b>3</b> citations</span>
+    <span class="chip"><b>1.5</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">3D Shape Modeling and Analysis</span><span class="chip soft">Computer Graphics and Visualization Techniques</span><span class="chip soft">Advanced Vision and Imaging</span>
+  </div>
+  <blockquote><span class="label">Key point</span>We find that the reflection discontinuity causes the issue.</blockquote>
+  <details><summary>Show the abstract</summary><p>Abstract Recently, 2D Gaussian Splatting (2DGS) has demonstrated superior geometry reconstruction quality than the popular 3DGS by using 2D surfels to approximate thin surfaces. However, it falls short when dealing with glossy surfaces, resulting in visible holes in these areas. We find that the reflection discontinuity causes the issue. To fit the jump from diffuse to specular reflection at different viewing angles, depth bias is introduced in the optimized Gaussian primitives. To address that, we first replace the depth distortion loss in 2DGS with a novel depth convergence loss, which imposes a strong constraint on depth continuity. Then, we rectify the depth criterion in determining the actual surface, which fully accounts for all the intersecting Gaussians along the ray. Qualitative and quantitative evaluations across various datasets reveal that our method significantly improves reconstruction quality, with more complete and accurate surfaces than 2DGS. Code is available at https://github.com/XiaoXinyyx/Unbiased_Surfel .</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1111/cgf.70252" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://arxiv.org/pdf/2503.06587" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1111/cgf.70252" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 3 of 5</p>
+  <h2>Lightweight contour-aware 2D Gaussian splatting under Plant-to-Camera</h2>
+  <p class="meta">Liang Zhao, Hanwen Tong, Hangyu Liu et al. · The Crop Journal · 2026</p>
+  <div class="chips">
+    <span class="chip"><b>1</b> citations</span>
+    <span class="chip"><b>1.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">3D Shape Modeling and Analysis</span><span class="chip soft">3D Surveying and Cultural Heritage</span><span class="chip soft">Smart Agriculture and AI</span>
+  </div>
+  <blockquote><span class="label">Key point</span>The objective of this study was to develop a 3D plant modeling strategy that enables camera pose recovery from segmented plant images and the reconstruction of an initial point cloud.</blockquote>
+  <details><summary>Show the abstract</summary><p>The objective of this study was to develop a 3D plant modeling strategy that enables camera pose recovery from segmented plant images and the reconstruction of an initial point cloud. A lightweight, contour-aware framework leverages the view-consistent and surface-oriented representation of 2D Gaussian Splatting, making it suitable for plant surface reconstruction under the Plant-to-Camera mode. A contour-weighted Laplacian regularization suppresses depth discontinuities around plant boundaries, while simplified Gaussian primitives improve computational efficiency without compromising geometric fidelity. Organ-level semantics are integrated into the reconstructed geometry to distinguish plant organs such as leaves, stems, and ears. On maize and wheat datasets, our method outperformed existing approaches in terms of morphological fidelity, organ-level structural consistency, and processing speed, demonstrating its suitability for plant phenotyping</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1016/j.cj.2026.07.002" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://www.sciencedirect.com/science/article/pii/S2214514126001790/pdf" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1016/j.cj.2026.07.002" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 4 of 5</p>
+  <h2>Satellite-GS: Enhanced 2D Gaussian Splatting for Robust Satellite Reconstruction</h2>
+  <p class="meta">Jingyuan Wang, Minghao Liu, Xi Yang et al. · IEEE Transactions on Geoscience and Remote Sensing · 2026</p>
+  <div class="chips">
+    <span class="chip"><b>1</b> citations</span>
+    <span class="chip"><b>1.0</b> per year</span>
+    <span class="chip">No free PDF</span>
+    <span class="chip soft">3D Shape Modeling and Analysis</span><span class="chip soft">Advanced Vision and Imaging</span><span class="chip soft">3D Surveying and Cultural Heritage</span>
+  </div>
+  <blockquote><span class="label">Key point</span>To overcome these obstacles, we propose Satellite-GS, a robust and precise STS reconstruction framework built upon enhanced 2D Gaussian Splatting (2DGS), which enables high-quality surface reconstruction with fewer parameters.</blockquote>
+  <details><summary>Show the abstract</summary><p>Accurate 3D reconstruction of satellites from satellite-to-satellite (STS) optical imagery is crucial for Space Situational Awareness (SSA), yet it is significantly challenged by the extreme space environment. Conventional 3D Gaussian Splatting (3DGS) pipelines degrade when facing STS-specific challenges, particularly in surface reconstruction quality. To overcome these obstacles, we propose Satellite-GS, a robust and precise STS reconstruction framework built upon enhanced 2D Gaussian Splatting (2DGS), which enables high-quality surface reconstruction with fewer parameters. Initially, we introduce a Satellite Image Deblurring (SID) model to perform motion deblurring and restore texture details. Subsequently, the 2DGS Enhancing introduces key innovations: KNN-based floater removal eliminates outliers and a Pixel-Enhance (PE) loss that preserves unlit satellite structures from erosion under extreme radiance imbalance. Moreover, we integrate an Iterative 2DGS Super-Resolution (I2DSR) that amplifies fine-grained detail while maintaining multi-view consistency, and employ an Adaptive Binary-Quaternary Splitting (ABQS) strategy that selectively densifies low-texture regions for detail refinement. We further introduce the NASA3D-Blur dataset, a specialized benchmark for satellite image deblurring evaluation, and conduct comprehensive evaluation on the deblurred NASA3D-MVS multi-view reconstruction dataset, comprising 30 real-world satellites captured in STS scenarios. Extensive experiments demonstrate that Satellite-GS substantially outperforms existing baselines, delivering superior texture fidelity under the harsh conditions of spaceborne relative imaging.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1109/tgrs.2026.3675851" target="_blank" rel="noopener">Open the paper</a>
+    <a class="button" href="https://doi.org/10.1109/tgrs.2026.3675851" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 5 of 5</p>
+  <h2>2D Gaussian Splatting for Image Compression</h2>
+  <p class="meta">Pingping Zhang, Xiangrui Liu, Meng Wang et al. · APSIPA Transactions on Signal and Information Processing · 2024</p>
+  <div class="chips">
+    <span class="chip"><b>3</b> citations</span>
+    <span class="chip"><b>1.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Advanced Data Compression Techniques</span><span class="chip soft">Video Coding and Compression Technologies</span><span class="chip soft">Generative Adversarial Networks and Image Synthesis</span>
+  </div>
+  <blockquote><span class="label">Key point</span>Thus, we propose a new image compression scheme leveraging the 2D Gaussian splatting technique to accelerate encoding speed and maintain decoding efficiency.</blockquote>
+  <details><summary>Show the abstract</summary><p>The implicit neural representation (INR) employed in image compression shows high decoding efficiency, yet it requires long encoding times due to the need for the model training tailored to the specific image being coded. Thus, we propose a new image compression scheme leveraging the 2D Gaussian splatting technique to accelerate encoding speed and maintain decoding efficiency. Specifically, we parameterize these Gaussians with key attributes including position, anisotropic covariance, color, and opacity coefficients, totaling 9 parameters per Gaussian. We initialize these Gaussians by sampling points from the image, followed by employing an αblending mechanism to determine the color values of each pixel. For compact attribute representation, we adopt a K-means based vector quantization approach for anisotropic covariance, color and opacity coefficients. Additionally, we introduce an adaptive dense control methodology to dynamically adjust Gaussian numbers, facilitating automatic point reduction or augmentation. Finally, the position, codebooks and indexes of other attributes are quantized and compressed by the lossless entropy coding. Our experimental evaluation demonstrates that our method achieves faster encoding speeds compared to other INR techniques while exhibiting comparable decoding speeds. © 2024 P. Zhang, X. Liu, M. Wang, S. Wang and S. Kwong.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1561/116.20240025" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://doi.org/10.1561/116.20240025" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1561/116.20240025" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">References</p>
+  <h2>Cite these papers</h2>
+  <ol class="refs"><li>Shuyi Zhou, Shuxiang Xie, Ryoichi Ishikawa et al. (2025). <i>Robust LiDAR-Camera Calibration With 2D Gaussian Splatting</i>. IEEE Robotics and Automation Letters. doi:10.1109/lra.2025.3552955</li><li>Yixin Yang, Yang Zhou, Hui Huang (2025). <i>Introducing Unbiased Depth into 2D Gaussian Splatting for High‐accuracy Surface Reconstruction</i>. Computer Graphics Forum. doi:10.1111/cgf.70252</li><li>Liang Zhao, Hanwen Tong, Hangyu Liu et al. (2026). <i>Lightweight contour-aware 2D Gaussian splatting under Plant-to-Camera</i>. The Crop Journal. doi:10.1016/j.cj.2026.07.002</li><li>Jingyuan Wang, Minghao Liu, Xi Yang et al. (2026). <i>Satellite-GS: Enhanced 2D Gaussian Splatting for Robust Satellite Reconstruction</i>. IEEE Transactions on Geoscience and Remote Sensing. doi:10.1109/tgrs.2026.3675851</li><li>Pingping Zhang, Xiangrui Liu, Meng Wang et al. (2024). <i>2D Gaussian Splatting for Image Compression</i>. APSIPA Transactions on Signal and Information Processing. doi:10.1561/116.20240025</li></ol>
+  <div class="links">
+    <button class="button" id="copy-bib" type="button">Copy BibTeX</button>
+    <button class="button" id="download-bib" type="button">Download .bib</button>
+    <span id="copy-status" class="muted" aria-live="polite"></span>
+  </div>
+  <details><summary>Show the BibTeX</summary><pre id="bibtex">@article{zhou2025robust,
+  title = {{Robust LiDAR-Camera Calibration With 2D Gaussian Splatting}},
+  author = {Shuyi Zhou and Shuxiang Xie and Ryoichi Ishikawa and Takeshi Oishi},
+  year = {2025},
+  journal = {IEEE Robotics and Automation Letters},
+  doi = {10.1109/lra.2025.3552955},
+  url = {https://doi.org/10.1109/lra.2025.3552955}
+}
+
+@article{yang2025introducing,
+  title = {{Introducing Unbiased Depth into 2D Gaussian Splatting for High‐accuracy Surface Reconstruction}},
+  author = {Yixin Yang and Yang Zhou and Hui Huang},
+  year = {2025},
+  journal = {Computer Graphics Forum},
+  doi = {10.1111/cgf.70252},
+  url = {https://doi.org/10.1111/cgf.70252}
+}
+
+@article{zhao2026lightweight,
+  title = {{Lightweight contour-aware 2D Gaussian splatting under Plant-to-Camera}},
+  author = {Liang Zhao and Hanwen Tong and Hangyu Liu and Zhanwang Zhu and Weibing Jin and Yuping Zhong and Bo Wu and Lin Li and Weifu Li},
+  year = {2026},
+  journal = {The Crop Journal},
+  doi = {10.1016/j.cj.2026.07.002},
+  url = {https://doi.org/10.1016/j.cj.2026.07.002}
+}
+
+@article{wang2026satellite,
+  title = {{Satellite-GS: Enhanced 2D Gaussian Splatting for Robust Satellite Reconstruction}},
+  author = {Jingyuan Wang and Minghao Liu and Xi Yang and Xin Wei and Lu Wang and Nannan Wang},
+  year = {2026},
+  journal = {IEEE Transactions on Geoscience and Remote Sensing},
+  doi = {10.1109/tgrs.2026.3675851},
+  url = {https://doi.org/10.1109/tgrs.2026.3675851}
+}
+
+@article{zhang2024gaussian,
+  title = {{2D Gaussian Splatting for Image Compression}},
+  author = {Pingping Zhang and Xiangrui Liu and Meng Wang and Shiqi Wang and Sam Kwong},
+  year = {2024},
+  journal = {APSIPA Transactions on Signal and Information Processing},
+  doi = {10.1561/116.20240025},
+  url = {https://doi.org/10.1561/116.20240025}
+}
+</pre></details>
+</section></main>
+<nav>
+  <button class="button" id="prev" type="button" aria-label="Previous slide">←</button>
+  <span id="counter"></span>
+  <button class="button" id="next" type="button" aria-label="Next slide">→</button>
+</nav>
+<script>
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  var current = 0;
+  function show(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach(function (slide, i) { slide.classList.toggle("active", i === current); });
+    document.getElementById("counter").textContent = (current + 1) + " / " + slides.length;
+    document.getElementById("progress").style.width = ((current + 1) / slides.length * 100) + "%";
+    history.replaceState(null, "", "#" + (current + 1));
+  }
+  document.getElementById("prev").onclick = function () { show(current - 1); };
+  document.getElementById("next").onclick = function () { show(current + 1); };
+  document.addEventListener("keydown", function (event) {
+    if (event.target.closest && event.target.closest("summary, input, textarea")) return;
+    if (["ArrowRight", "PageDown", " "].indexOf(event.key) >= 0) { event.preventDefault(); show(current + 1); }
+    if (["ArrowLeft", "PageUp"].indexOf(event.key) >= 0) { event.preventDefault(); show(current - 1); }
+    if (event.key === "Home") show(0);
+    if (event.key === "End") show(slides.length - 1);
+  });
+  var touchX = null;
+  document.addEventListener("touchstart", function (e) { touchX = e.touches[0].clientX; });
+  document.addEventListener("touchend", function (e) {
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 60) show(current + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  var bibtex = document.getElementById("bibtex").textContent;
+  var status = document.getElementById("copy-status");
+  document.getElementById("copy-bib").onclick = function () {
+    function done() { status.textContent = "Copied."; }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(bibtex).then(done, fallback);
+    } else { fallback(); }
+    function fallback() {
+      var area = document.createElement("textarea");
+      area.value = bibtex; document.body.appendChild(area); area.select();
+      try { document.execCommand("copy"); done(); } catch (e) { status.textContent = "Copy failed. Use 'Show the BibTeX'."; }
+      document.body.removeChild(area);
+    }
+  };
+  document.getElementById("download-bib").onclick = function () {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([bibtex], { type: "application/x-bibtex" }));
+    a.download = "research-briefing-2d-gaussian-splatting.bib"; a.click();
+  };
+
+  var start = parseInt(location.hash.slice(1), 10);
+  show(isNaN(start) ? 0 : start - 1);
+})();
+</script>
+</body>
+</html>

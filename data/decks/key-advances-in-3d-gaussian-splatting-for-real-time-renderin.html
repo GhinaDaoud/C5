@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key Advances in 3D Gaussian Splatting for Real-Time Rendering and Surface Reconstruction</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6a64; --line: #dedcd3;
+  --accent: #2f5bd3; --accent-soft: #e6ecfb; --chip: #efeee8;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #151614; --panel: #1f201d; --text: #ecebe6; --muted: #a3a29b; --line: #34352f;
+          --accent: #8aa7ff; --accent-soft: #263055; --chip: #2a2b27; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text);
+       font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+.slide { position: absolute; inset: 0 0 64px 0; padding: 48px max(16px, calc((100vw - 1040px) / 2));
+         overflow-y: auto; opacity: 0; visibility: hidden; transform: translateX(24px);
+         transition: opacity .25s ease, transform .25s ease, visibility .25s; }
+.slide.active { opacity: 1; visibility: visible; transform: none; }
+.title-slide { display: flex; flex-direction: column; justify-content: center; }
+h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+h2 { font-size: clamp(24px, 3.4vw, 36px); line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 12px; }
+.kicker { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+          font-size: 13px; margin: 0 0 10px; }
+.lead { font-size: 22px; margin: 0 0 8px; }
+.muted, .meta { color: var(--muted); }
+.meta { margin: 0 0 18px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 28px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+        color: var(--muted); font-size: 14px; }
+.stat span { display: block; font-size: 26px; font-weight: 700; color: var(--text); }
+.two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; }
+.chart { width: 100%; height: auto; }
+.chart-label { fill: var(--text); font-size: 13px; }
+.chart-value { fill: var(--muted); font-size: 12px; }
+.chart-bar { fill: var(--accent); }
+.topics { list-style: none; padding: 0; margin: 0; }
+.topics li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.topics b { display: inline-block; min-width: 42px; color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { background: var(--chip); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+.chip.soft { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+blockquote { margin: 0 0 20px; padding: 18px 22px; background: var(--accent-soft); border-radius: 10px;
+             border-left: 4px solid var(--accent); font-size: 19px; }
+.label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+         color: var(--accent); margin-bottom: 6px; }
+details { margin: 0 0 20px; }
+summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+details p { color: var(--muted); max-width: 75ch; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px;
+      overflow-x: auto; font-size: 13px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 18px; }
+.button { display: inline-block; background: var(--panel); color: var(--text); border: 1px solid var(--line);
+          border-radius: 8px; padding: 8px 14px; font: inherit; font-size: 15px; text-decoration: none;
+          cursor: pointer; }
+.button:hover { border-color: var(--accent); color: var(--accent); }
+.refs li { margin-bottom: 8px; }
+nav { position: fixed; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center;
+      justify-content: center; gap: 16px; border-top: 1px solid var(--line); background: var(--bg); }
+nav .button { min-width: 44px; }
+#counter { min-width: 64px; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+#progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width .25s; }
+@media (max-width: 720px) {
+  .slide { padding-top: 28px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .slide, #progress { transition: none; } }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<main>
+<section class="slide title-slide">
+  <p class="kicker">Research briefing</p>
+  <h1>Key Advances in 3D Gaussian Splatting for Real-Time Rendering and Surface Reconstruction</h1>
+  <p class="lead">4 papers · 2023–2024 · 6,612 citations in total</p>
+  <p class="muted">Made on 01 November 2026 from OpenAlex data. Use ← → or the buttons below.</p>
+</section>
+<section class="slide">
+  <p class="kicker">At a glance</p>
+  <h2>The papers in this briefing</h2>
+  <div class="stats">
+    <div class="stat"><span>4</span>papers</div>
+    <div class="stat"><span>2023–2024</span>years</div>
+    <div class="stat"><span>6,612</span>citations</div>
+    <div class="stat"><span>3/4</span>free PDFs</div>
+  </div>
+  <div class="two-col">
+    <div><h3>Citations</h3><svg class="chart" viewBox="0 0 640 142" role="img" aria-label="Citations per paper"><text class="chart-label" x="0" y="21">1. 3D Gaussian Splatting for Real-Ti…</text><rect class="chart-bar" x="250" y="8" width="320" height="18" rx="3"><title>3D Gaussian Splatting for Real-Time Radiance Field Rendering: 6052 citations</title></rect><text class="chart-value" x="578" y="21">6,052 · 2023</text><text class="chart-label" x="0" y="55">2. A Hierarchical 3D Gaussian Repres…</text><rect class="chart-bar" x="250" y="42" width="10" height="18" rx="3"><title>A Hierarchical 3D Gaussian Representation for Real-Time Rendering of Very Large Datasets: 192 citations</title></rect><text class="chart-value" x="268" y="55">192 · 2024</text><text class="chart-label" x="0" y="89">3. PGSR: Planar-Based Gaussian Splat…</text><rect class="chart-bar" x="250" y="76" width="10" height="18" rx="3"><title>PGSR: Planar-Based Gaussian Splatting for Efficient and High-Fidelity Surface Reconstruction: 188 citations</title></rect><text class="chart-value" x="268" y="89">188 · 2024</text><text class="chart-label" x="0" y="123">4. Gaussian Opacity Fields: Efficien…</text><rect class="chart-bar" x="250" y="110" width="10" height="18" rx="3"><title>Gaussian Opacity Fields: Efficient Adaptive Surface Reconstruction in Unbounded Scenes: 180 citations</title></rect><text class="chart-value" x="268" y="123">180 · 2024</text></svg></div>
+    <div><h3>Shared topics</h3>
+      <ul class="topics"><li>No topics in the data.</li></ul>
+    </div>
+  </div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 1 of 4</p>
+  <h2>3D Gaussian Splatting for Real-Time Radiance Field Rendering</h2>
+  <p class="meta">Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler et al. · ACM Transactions on Graphics · 2023</p>
+  <div class="chips">
+    <span class="chip"><b>6,052</b> citations</span>
+    <span class="chip"><b>1513.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    
+  </div>
+  <blockquote><span class="label">Key point</span>This paper introduces a 3D Gaussian splatting method achieving state-of-the-art visual quality and real-time (≥30 fps) novel-view synthesis at 1080p, optimizing anisotropic covariance and using a fast visibility-aware rendering algorithm.</blockquote>
+  <details><summary>Show the abstract</summary><p>Radiance Field methods have recently revolutionized novel-view synthesis of scenes captured with multiple photos or videos. However, achieving high visual quality still requires neural networks that are costly to train and render, while recent faster methods inevitably trade off speed for quality. For unbounded and complete scenes (rather than isolated objects) and 1080p resolution rendering, no current method can achieve real-time display rates. We introduce three key elements that allow us to achieve state-of-the-art visual quality while maintaining competitive training times and importantly allow high-quality real-time (≥ 30 fps) novel-view synthesis at 1080p resolution. First, starting from sparse points produced during camera calibration, we represent the scene with 3D Gaussians that preserve desirable properties of continuous volumetric radiance fields for scene optimization while avoiding unnecessary computation in empty space; Second, we perform interleaved optimization/density control of the 3D Gaussians, notably optimizing anisotropic covariance to achieve an accurate representation of the scene; Third, we develop a fast visibility-aware rendering algorithm that supports anisotropic splatting and both accelerates training and allows realtime rendering. We demonstrate state-of-the-art visual quality and real-time rendering on several established datasets.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1145/3592433" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://arxiv.org/pdf/2308.04079" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1145/3592433" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 2 of 4</p>
+  <h2>A Hierarchical 3D Gaussian Representation for Real-Time Rendering of Very Large Datasets</h2>
+  <p class="meta">Bernhard Kerbl, Andréas Meuleman, Georgios Kopanas et al. · ACM Transactions on Graphics · 2024</p>
+  <div class="chips">
+    <span class="chip"><b>192</b> citations</span>
+    <span class="chip"><b>64.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    
+  </div>
+  <blockquote><span class="label">Key point</span>Introduces a hierarchical 3D Gaussian representation enabling real-time rendering of very large scenes with level-of-detail control and efficient training of scene chunks.</blockquote>
+  <details><summary>Show the abstract</summary><p>Novel view synthesis has seen major advances in recent years, with 3D Gaussian splatting offering an excellent level of visual quality, fast training and real-time rendering. However, the resources needed for training and rendering inevitably limit the size of the captured scenes that can be represented with good visual quality. We introduce a hierarchy of 3D Gaussians that preserves visual quality for very large scenes, while offering an efficient Level-of-Detail (LOD) solution for efficient rendering of distant content with effective level selection and smooth transitions between levels. We introduce a divide-and-conquer approach that allows us to train very large scenes in independent chunks. We consolidate the chunks into a hierarchy that can be optimized to further improve visual quality of Gaussians merged into intermediate nodes. Very large captures typically have sparse coverage of the scene, presenting many challenges to the original 3D Gaussian splatting training method; we adapt and regularize training to account for these issues. We present a complete solution, that enables real-time rendering of very large scenes and can adapt to available resources thanks to our LOD method. We show results for captured scenes with up to tens of thousands of images with a simple and affordable rig, covering trajectories of up to several kilometers and lasting up to one hour.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1145/3658160" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://arxiv.org/pdf/2406.12080" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1145/3658160" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 3 of 4</p>
+  <h2>PGSR: Planar-Based Gaussian Splatting for Efficient and High-Fidelity Surface Reconstruction</h2>
+  <p class="meta">Danpeng Chen, Hai Li, Weicai Ye et al. · IEEE Transactions on Visualization and Computer Graphics · 2024</p>
+  <div class="chips">
+    <span class="chip"><b>188</b> citations</span>
+    <span class="chip"><b>62.7</b> per year</span>
+    <span class="chip">Free PDF</span>
+    
+  </div>
+  <blockquote><span class="label">Key point</span>This paper proposes PGSR, a planar-based Gaussian splatting method for fast training and high-fidelity surface reconstruction with multi-view consistency and exposure compensation.</blockquote>
+  <details><summary>Show the abstract</summary><p>Recently, 3D Gaussian Splatting (3DGS) has attracted widespread attention due to its high-quality rendering, and ultra-fast training and rendering speed. However, due to the unstructured and irregular nature of Gaussian point clouds, it is difficult to guarantee geometric reconstruction accuracy and multi-view consistency simply by relying on image reconstruction loss. Although many studies on surface reconstruction based on 3DGS have emerged recently, the quality of their meshes is generally unsatisfactory. To address this problem, we propose a fast planar-based Gaussian splatting reconstruction representation (PGSR) to achieve high-fidelity surface reconstruction while ensuring high-quality rendering. Specifically, we first introduce an unbiased depth rendering method, which directly renders the distance from the camera origin to the Gaussian plane and the corresponding normal map based on the Gaussian distribution of the point cloud, and divides the two to obtain the unbiased depth. We then introduce single-view geometric, multi-view photometric, and geometric regularization to preserve global geometric accuracy. We also propose a camera exposure compensation model to cope with scenes with large illumination variations. Experiments on indoor and outdoor scenes show that the proposed method achieves fast training and rendering while maintaining high-fidelity rendering and geometric reconstruction, outperforming 3DGS-based and NeRF-based methods.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1109/tvcg.2024.3494046" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://arxiv.org/pdf/2406.06521" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1109/tvcg.2024.3494046" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 4 of 4</p>
+  <h2>Gaussian Opacity Fields: Efficient Adaptive Surface Reconstruction in Unbounded Scenes</h2>
+  <p class="meta">Zehao Yu, Torsten Sattler, Andreas Geiger · ACM Transactions on Graphics · 2024</p>
+  <div class="chips">
+    <span class="chip"><b>180</b> citations</span>
+    <span class="chip"><b>60.0</b> per year</span>
+    <span class="chip">No free PDF</span>
+    
+  </div>
+  <blockquote><span class="label">Key point</span>Introduces Gaussian Opacity Fields, a novel ray-tracing-based approach for efficient, high-quality, and adaptive surface reconstruction in unbounded scenes with improved geometry and direct extraction.</blockquote>
+  <details><summary>Show the abstract</summary><p>Recently, 3D Gaussian Splatting (3DGS) has demonstrated impressive novel view synthesis results, while allowing the rendering of high-resolution images in real-time. However, leveraging 3D Gaussians for surface reconstruction poses significant challenges due to the explicit and disconnected nature of 3D Gaussians. In this work, we present Gaussian Opacity Fields (GOF), a novel approach for efficient, high-quality, and adaptive surface reconstruction in unbounded scenes. Our GOF is derived from ray-tracing-based volume rendering of 3D Gaussians, enabling direct geometry extraction from 3D Gaussians by identifying its levelset, without resorting to Poisson reconstruction or TSDF fusion as in previous work. We approximate the surface normal of Gaussians as the normal of the ray-Gaussian intersection plane, enabling the application of regularization that significantly enhances geometry. Furthermore, we develop an efficient geometry extraction method utilizing Marching Tetrahedra, where the tetrahedral grids are induced from 3D Gaussians and thus adapt to the scene&#x27;s complexity. Our evaluations reveal that GOF surpasses existing 3DGS-based methods in surface reconstruction and novel view synthesis. Further, it compares favorably to or even outperforms, neural implicit methods in both quality and speed.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1145/3687937" target="_blank" rel="noopener">Open the paper</a>
+    <a class="button" href="https://doi.org/10.1145/3687937" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">References</p>
+  <h2>Cite these papers</h2>
+  <ol class="refs"><li>Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler et al. (2023). <i>3D Gaussian Splatting for Real-Time Radiance Field Rendering</i>. ACM Transactions on Graphics. doi:10.1145/3592433</li><li>Bernhard Kerbl, Andréas Meuleman, Georgios Kopanas et al. (2024). <i>A Hierarchical 3D Gaussian Representation for Real-Time Rendering of Very Large Datasets</i>. ACM Transactions on Graphics. doi:10.1145/3658160</li><li>Danpeng Chen, Hai Li, Weicai Ye et al. (2024). <i>PGSR: Planar-Based Gaussian Splatting for Efficient and High-Fidelity Surface Reconstruction</i>. IEEE Transactions on Visualization and Computer Graphics. doi:10.1109/tvcg.2024.3494046</li><li>Zehao Yu, Torsten Sattler, Andreas Geiger (2024). <i>Gaussian Opacity Fields: Efficient Adaptive Surface Reconstruction in Unbounded Scenes</i>. ACM Transactions on Graphics. doi:10.1145/3687937</li></ol>
+  <div class="links">
+    <button class="button" id="copy-bib" type="button">Copy BibTeX</button>
+    <button class="button" id="download-bib" type="button">Download .bib</button>
+    <span id="copy-status" class="muted" aria-live="polite"></span>
+  </div>
+  <details><summary>Show the BibTeX</summary><pre id="bibtex">@article{kerbl2023gaussian,
+  title = {{3D Gaussian Splatting for Real-Time Radiance Field Rendering}},
+  author = {Bernhard Kerbl and Georgios Kopanas and Thomas Leimkühler and George Drettakis B},
+  year = {2023},
+  journal = {ACM Transactions on Graphics},
+  doi = {10.1145/3592433},
+  url = {https://doi.org/10.1145/3592433}
+}
+
+@article{kerbl2024hierarchical,
+  title = {{A Hierarchical 3D Gaussian Representation for Real-Time Rendering of Very Large Datasets}},
+  author = {Bernhard Kerbl and Andréas Meuleman and Georgios Kopanas and Michael H. Wimmer and Alexandre Lanvin and George Drettakis B},
+  year = {2024},
+  journal = {ACM Transactions on Graphics},
+  doi = {10.1145/3658160},
+  url = {https://doi.org/10.1145/3658160}
+}
+
+@article{chen2024pgsr,
+  title = {{PGSR: Planar-Based Gaussian Splatting for Efficient and High-Fidelity Surface Reconstruction}},
+  author = {Danpeng Chen and Hai Li and Weicai Ye and Yifan Wang and Weijian Xie and Shangjin Zhai and Nan Wang and Haomin Liu and Hujun Bao and Guofeng Zhang},
+  year = {2024},
+  journal = {IEEE Transactions on Visualization and Computer Graphics},
+  doi = {10.1109/tvcg.2024.3494046},
+  url = {https://doi.org/10.1109/tvcg.2024.3494046}
+}
+
+@article{yu2024gaussian,
+  title = {{Gaussian Opacity Fields: Efficient Adaptive Surface Reconstruction in Unbounded Scenes}},
+  author = {Zehao Yu and Torsten Sattler and Andreas Geiger},
+  year = {2024},
+  journal = {ACM Transactions on Graphics},
+  doi = {10.1145/3687937},
+  url = {https://doi.org/10.1145/3687937}
+}
+</pre></details>
+</section></main>
+<nav>
+  <button class="button" id="prev" type="button" aria-label="Previous slide">←</button>
+  <span id="counter"></span>
+  <button class="button" id="next" type="button" aria-label="Next slide">→</button>
+</nav>
+<script>
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  var current = 0;
+  function show(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach(function (slide, i) { slide.classList.toggle("active", i === current); });
+    document.getElementById("counter").textContent = (current + 1) + " / " + slides.length;
+    document.getElementById("progress").style.width = ((current + 1) / slides.length * 100) + "%";
+    history.replaceState(null, "", "#" + (current + 1));
+  }
+  document.getElementById("prev").onclick = function () { show(current - 1); };
+  document.getElementById("next").onclick = function () { show(current + 1); };
+  document.addEventListener("keydown", function (event) {
+    if (event.target.closest && event.target.closest("summary, input, textarea")) return;
+    if (["ArrowRight", "PageDown", " "].indexOf(event.key) >= 0) { event.preventDefault(); show(current + 1); }
+    if (["ArrowLeft", "PageUp"].indexOf(event.key) >= 0) { event.preventDefault(); show(current - 1); }
+    if (event.key === "Home") show(0);
+    if (event.key === "End") show(slides.length - 1);
+  });
+  var touchX = null;
+  document.addEventListener("touchstart", function (e) { touchX = e.touches[0].clientX; });
+  document.addEventListener("touchend", function (e) {
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 60) show(current + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  var bibtex = document.getElementById("bibtex").textContent;
+  var status = document.getElementById("copy-status");
+  document.getElementById("copy-bib").onclick = function () {
+    function done() { status.textContent = "Copied."; }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(bibtex).then(done, fallback);
+    } else { fallback(); }
+    function fallback() {
+      var area = document.createElement("textarea");
+      area.value = bibtex; document.body.appendChild(area); area.select();
+      try { document.execCommand("copy"); done(); } catch (e) { status.textContent = "Copy failed. Use 'Show the BibTeX'."; }
+      document.body.removeChild(area);
+    }
+  };
+  document.getElementById("download-bib").onclick = function () {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([bibtex], { type: "application/x-bibtex" }));
+    a.download = "key-advances-in-3d-gaussian-splatting-for-real-time-renderin.bib"; a.click();
+  };
+
+  var start = parseInt(location.hash.slice(1), 10);
+  show(isNaN(start) ? 0 : start - 1);
+})();
+</script>
+</body>
+</html>

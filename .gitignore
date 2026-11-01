@@ -4,8 +4,8 @@
 # Virtual environment
 .venv/
 
-# Decks and .bib files (made when the tools run)
-data/
+# # Decks and .bib files (made when the tools run)
+# data/
 
 # Python / Jupyter
 __pycache__/

@@ -1,0 +1,35 @@
+Unit tests: pytest -v
+Date: 2026-11-01 13:59
+
+================================================= test session starts =================================================
+platform win32 -- Python 3.10.11, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\user\Downloads\C5\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\user\Downloads\C5
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.15.1, platformdirs-4.12.4, asyncio-1.4.1
+asyncio: mode=auto, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 20 items
+
+tests/test_tools.py::test_server_has_three_tools_and_one_resource PASSED                                         [  5%]
+tests/test_tools.py::test_search_returns_papers_with_clean_fields PASSED                                         [ 10%]
+tests/test_tools.py::test_search_removes_characters_that_break_the_filter PASSED                                 [ 15%]
+tests/test_tools.py::test_search_with_an_empty_topic_fails_before_any_request PASSED                             [ 20%]
+tests/test_tools.py::test_search_with_a_bad_limit_or_year_fails_before_any_request PASSED                        [ 25%]
+tests/test_tools.py::test_search_when_openalex_is_unreachable PASSED                                             [ 30%]
+tests/test_tools.py::test_search_when_the_daily_limit_is_used_up PASSED                                          [ 35%]
+tests/test_tools.py::test_deck_is_saved_with_a_bib_file_and_shown_in_the_resource PASSED                         [ 40%]
+tests/test_tools.py::test_deck_never_overwrites_an_earlier_deck PASSED                                           [ 45%]
+tests/test_tools.py::test_bad_deck_input_fails_and_saves_nothing[papers0-between 1 and 12 papers] PASSED         [ 50%]
+tests/test_tools.py::test_bad_deck_input_fails_and_saves_nothing[papers1-in the list twice] PASSED               [ 55%]
+tests/test_tools.py::test_bad_deck_input_fails_and_saves_nothing[papers2-not possible] PASSED                    [ 60%]
+tests/test_tools.py::test_bad_deck_input_fails_and_saves_nothing[papers3-Keep it under 500] PASSED               [ 65%]
+tests/test_tools.py::test_briefing_ranks_by_citations_per_year_and_makes_the_deck PASSED                         [ 70%]
+tests/test_tools.py::test_briefing_puts_on_topic_titles_first PASSED                                             [ 75%]
+tests/test_tools.py::test_briefing_with_no_papers_makes_nothing PASSED                                           [ 80%]
+tests/test_tools.py::test_briefing_passes_on_errors_from_the_data_tool PASSED                                    [ 85%]
+tests/test_tools.py::test_title_match_knows_plurals_and_acronyms PASSED                                          [ 90%]
+tests/test_tools.py::test_key_sentence_prefers_what_the_paper_does PASSED                                        [ 95%]
+tests/test_tools.py::test_clean_text_removes_latex_and_html PASSED                                               [100%]
+
+================================================= 20 passed in 4.73s ==================================================

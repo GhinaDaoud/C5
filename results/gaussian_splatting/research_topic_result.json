@@ -1,0 +1,55 @@
+{
+  "created": true,
+  "reason": "Deck made with the top 5 of 40 papers (the most cited and the closest matches), ranked by how well the title matches, then by citations per year. Saved to C:\\Users\\user\\Downloads\\C5\\results\\gaussian_splatting\\research-briefing-gaussian-splatting.html.",
+  "deck": {
+    "title": "Research briefing: gaussian splatting",
+    "papers": 5,
+    "slides": 8,
+    "path": "C:\\Users\\user\\Downloads\\C5\\results\\gaussian_splatting\\research-briefing-gaussian-splatting.html",
+    "file_url": "file:///C:/Users/user/Downloads/C5/results/gaussian_splatting/research-briefing-gaussian-splatting.html",
+    "bib_path": "C:\\Users\\user\\Downloads\\C5\\results\\gaussian_splatting\\research-briefing-gaussian-splatting.bib"
+  },
+  "considered": 40,
+  "papers": [
+    {
+      "title": "3D Gaussian Splatting for Real-Time Radiance Field Rendering",
+      "year": 2023,
+      "citations": 6041,
+      "title_match": 1.0,
+      "citations_per_year": 1510.2,
+      "takeaway": "We introduce three key elements that allow us to achieve state-of-the-art visual quality while maintaining competitive training times and importantly allow high-quality real-time (≥ 30 fps) novel-view synthesis at 1080p resolution."
+    },
+    {
+      "title": "Recent advances in 3D Gaussian splatting",
+      "year": 2024,
+      "citations": 255,
+      "title_match": 1.0,
+      "citations_per_year": 85.0,
+      "takeaway": "Considering the rapid changes and growing number of works in this field, we present a literature review of recent 3D Gaussian splatting methods, which can be roughly classified by functionality into 3D reconstruction, 3D editing, and other downstream applications."
+    },
+    {
+      "title": "A Survey on 3D Gaussian Splatting",
+      "year": 2026,
+      "citations": 71,
+      "title_match": 1.0,
+      "citations_per_year": 71.0,
+      "takeaway": "3D Gaussian splatting (GS) has emerged as a transformative technique in radiance fields."
+    },
+    {
+      "title": "3D Gaussian Splatting as a New Era: A Survey",
+      "year": 2024,
+      "citations": 211,
+      "title_match": 1.0,
+      "citations_per_year": 70.3,
+      "takeaway": "Given the growing popularity and expanding research in 3D-GS, this paper presents a comprehensive survey of relevant papers from the past year."
+    },
+    {
+      "title": "3D Gaussian Splatting: Survey, Technologies, Challenges, and Opportunities",
+      "year": 2025,
+      "citations": 140,
+      "title_match": 1.0,
+      "citations_per_year": 70.0,
+      "takeaway": "Based on these analyses, we further examine the common challenges and technologies across various tasks, proposing potential research opportunities."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+My first version of this assignment was a weather-based outing planner. It worked, but it felt too basic, so I
+switched to something I would actually use: an assistant that finds research papers on a topic and turns them into
+a slide deck. 
+To decide where one tool ends and the next one begins, I used a simple test. If I needed the word
+"and" to describe a tool, it was probably doing too much. That gave me search_papers, which only reads from
+OpenAlex, and create_research_deck, which only writes the deck and its .bib file and never searches on its own. I
+was tempted to let the deck tool fetch the papers by their IDs, since that would have made the agent's job a little
+easier. But then a failed search could break a write, and the tool would no longer have one clear job.
+research_topic is the only tool that does several things, because coordinating the other two is its whole purpose.
+It reuses the same functions instead of copying them. Every tool also checks its inputs before it touches the
+network or the disk, so a bad call fails with a clear message and never leaves a half-finished deck behind.
+
+Three tools felt like the right number here, because they match how a literature search actually goes: you find
+papers, you pick the ones that matter, and you make something out of them. I did think about a separate ranking
+tool, but a ranking on its own is not useful to anyone, so it stayed inside the orchestration step. The limits of
+this design showed up quickly, though. research_topic has no model of its own, so it cannot write a good summary of
+a paper. That is why there are really two paths: a fast one-step briefing, and a slower one where the agent picks
+the papers and writes the key points itself. Testing taught me more than planning did. Ranking only by citations
+gave me a "retrieval augmented generation" deck with a survey on loss functions in it, and ranking only by relevance
+gave me brand-new papers that nobody had cited yet. Combining both searches, checking the titles, and ranking by
+citations per year fixed most of it. If I kept going, I would use MCP sampling so that research_topic could ask the
+model for better key points. I would also handle acronyms like "RAG" properly and add a way to delete old decks.

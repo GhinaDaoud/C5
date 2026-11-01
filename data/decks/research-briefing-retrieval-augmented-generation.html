@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research briefing: retrieval augmented generation</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6a64; --line: #dedcd3;
+  --accent: #2f5bd3; --accent-soft: #e6ecfb; --chip: #efeee8;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #151614; --panel: #1f201d; --text: #ecebe6; --muted: #a3a29b; --line: #34352f;
+          --accent: #8aa7ff; --accent-soft: #263055; --chip: #2a2b27; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text);
+       font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+.slide { position: absolute; inset: 0 0 64px 0; padding: 48px max(16px, calc((100vw - 1040px) / 2));
+         overflow-y: auto; opacity: 0; visibility: hidden; transform: translateX(24px);
+         transition: opacity .25s ease, transform .25s ease, visibility .25s; }
+.slide.active { opacity: 1; visibility: visible; transform: none; }
+.title-slide { display: flex; flex-direction: column; justify-content: center; }
+h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+h2 { font-size: clamp(24px, 3.4vw, 36px); line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 12px; }
+.kicker { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+          font-size: 13px; margin: 0 0 10px; }
+.lead { font-size: 22px; margin: 0 0 8px; }
+.muted, .meta { color: var(--muted); }
+.meta { margin: 0 0 18px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 28px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+        color: var(--muted); font-size: 14px; }
+.stat span { display: block; font-size: 26px; font-weight: 700; color: var(--text); }
+.two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; }
+.chart { width: 100%; height: auto; }
+.chart-label { fill: var(--text); font-size: 13px; }
+.chart-value { fill: var(--muted); font-size: 12px; }
+.chart-bar { fill: var(--accent); }
+.topics { list-style: none; padding: 0; margin: 0; }
+.topics li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.topics b { display: inline-block; min-width: 42px; color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { background: var(--chip); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+.chip.soft { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+blockquote { margin: 0 0 20px; padding: 18px 22px; background: var(--accent-soft); border-radius: 10px;
+             border-left: 4px solid var(--accent); font-size: 19px; }
+.label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+         color: var(--accent); margin-bottom: 6px; }
+details { margin: 0 0 20px; }
+summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+details p { color: var(--muted); max-width: 75ch; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px;
+      overflow-x: auto; font-size: 13px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 18px; }
+.button { display: inline-block; background: var(--panel); color: var(--text); border: 1px solid var(--line);
+          border-radius: 8px; padding: 8px 14px; font: inherit; font-size: 15px; text-decoration: none;
+          cursor: pointer; }
+.button:hover { border-color: var(--accent); color: var(--accent); }
+.refs li { margin-bottom: 8px; }
+nav { position: fixed; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center;
+      justify-content: center; gap: 16px; border-top: 1px solid var(--line); background: var(--bg); }
+nav .button { min-width: 44px; }
+#counter { min-width: 64px; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+#progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width .25s; }
+@media (max-width: 720px) {
+  .slide { padding-top: 28px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .slide, #progress { transition: none; } }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<main>
+<section class="slide title-slide">
+  <p class="kicker">Research briefing</p>
+  <h1>retrieval augmented generation</h1>
+  <p class="lead">4 papers · 2025–2026 · 911 citations in total</p>
+  <p class="muted">Made on 31 October 2026 from OpenAlex data. Use ← → or the buttons below.</p>
+</section>
+<section class="slide">
+  <p class="kicker">At a glance</p>
+  <h2>The papers in this briefing</h2>
+  <div class="stats">
+    <div class="stat"><span>4</span>papers</div>
+    <div class="stat"><span>2025–2026</span>years</div>
+    <div class="stat"><span>911</span>citations</div>
+    <div class="stat"><span>4/4</span>free PDFs</div>
+  </div>
+  <div class="two-col">
+    <div><h3>Citations</h3><svg class="chart" viewBox="0 0 640 142" role="img" aria-label="Citations per paper"><text class="chart-label" x="0" y="21">1. Retrieval-Augmented Generation fo…</text><rect class="chart-bar" x="250" y="8" width="288" height="18" rx="3"><title>Retrieval-Augmented Generation for AI-Generated Content: A Survey: 240 citations</title></rect><text class="chart-value" x="546" y="21">240 · 2026</text><text class="chart-label" x="0" y="55">2. Retrieval augmented generation fo…</text><rect class="chart-bar" x="250" y="42" width="320" height="18" rx="3"><title>Retrieval augmented generation for large language models in healthcare: A systematic review: 267 citations</title></rect><text class="chart-value" x="578" y="55">267 · 2025</text><text class="chart-label" x="0" y="89">3. Graph Retrieval-Augmented Generat…</text><rect class="chart-bar" x="250" y="76" width="247" height="18" rx="3"><title>Graph Retrieval-Augmented Generation: A Survey: 206 citations</title></rect><text class="chart-value" x="505" y="89">206 · 2025</text><text class="chart-label" x="0" y="123">4. Improving large language model ap…</text><rect class="chart-bar" x="250" y="110" width="237" height="18" rx="3"><title>Improving large language model applications in biomedicine with retrieval-augmented generation: a systematic review, meta-analysis, and clinical development guidelines: 198 citations</title></rect><text class="chart-value" x="495" y="123">198 · 2025</text></svg></div>
+    <div><h3>Shared topics</h3>
+      <ul class="topics"><li><b>4/4</b> Topic Modeling</li><li><b>2/4</b> Information Retrieval and Search Behavior</li><li><b>2/4</b> Multimodal Machine Learning Applications</li><li><b>2/4</b> Artificial Intelligence in Healthcare and Education</li><li><b>2/4</b> Machine Learning in Healthcare</li></ul>
+    </div>
+  </div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 1 of 4</p>
+  <h2>Retrieval-Augmented Generation for AI-Generated Content: A Survey</h2>
+  <p class="meta">Penghao Zhao, Hailin Zhang, Qinhan Yu et al. · Data Science and Engineering · 2026</p>
+  <div class="chips">
+    <span class="chip"><b>240</b> citations</span>
+    <span class="chip"><b>240.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Topic Modeling</span><span class="chip soft">Information Retrieval and Search Behavior</span><span class="chip soft">Multimodal Machine Learning Applications</span>
+  </div>
+  <blockquote><span class="label">Key point</span>In this paper, we comprehensively review existing efforts that integrate RAG techniques into AIGC scenarios.</blockquote>
+  <details><summary>Show the abstract</summary><p>Advancements in model algorithms, the growth of foundational models, and access to high-quality datasets have propelled the evolution of Artificial Intelligence Generated Content (AIGC). Despite its notable successes, AIGC still faces hurdles such as updating knowledge, handling long-tail data, mitigating data leakage, and managing high training and inference costs. Retrieval-augmented generation (RAG) has recently emerged as a paradigm to address such challenges. In particular, RAG introduces the information retrieval process, which enhances the generation process by retrieving relevant objects from available data stores, leading to higher accuracy and better robustness. In this paper, we comprehensively review existing efforts that integrate RAG techniques into AIGC scenarios. We first classify RAG foundations according to how the retriever augments the generator, distilling the fundamental abstractions of the augmentation methodologies for various retrievers and generators. This unified perspective encompasses all RAG scenarios, illuminating advancements and pivotal technologies that help with potential future progress. We also summarize additional enhancement methods for RAG, facilitating effective engineering and implementation of RAG systems. Then from another view, we survey practical applications of RAG across different modalities and tasks, offering valuable references for researchers and practitioners. Furthermore, we introduce the benchmarks for RAG, discuss the limitations of current RAG systems, and suggest potential directions for future research.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1007/s41019-025-00335-5" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://doi.org/10.1007/s41019-025-00335-5" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1007/s41019-025-00335-5" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 2 of 4</p>
+  <h2>Retrieval augmented generation for large language models in healthcare: A systematic review</h2>
+  <p class="meta">Lameck Mbangula Amugongo, Pietro Mascheroni, Steven Brooks et al. · PLOS Digital Health · 2025</p>
+  <div class="chips">
+    <span class="chip"><b>267</b> citations</span>
+    <span class="chip"><b>133.5</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Artificial Intelligence in Healthcare and Education</span><span class="chip soft">Topic Modeling</span><span class="chip soft">Machine Learning in Healthcare</span>
+  </div>
+  <blockquote><span class="label">Key point</span>We find that a range of techniques are employed RAG-based LLMs in healthcare, including Naive RAG, Advanced RAG, and Modular RAG.</blockquote>
+  <details><summary>Show the abstract</summary><p>Large Language Models (LLMs) have demonstrated promising capabilities to solve complex tasks in critical sectors such as healthcare. However, LLMs are limited by their training data which is often outdated, the tendency to generate inaccurate (&quot;hallucinated&quot;) content and a lack of transparency in the content they generate. To address these limitations, retrieval augmented generation (RAG) grounds the responses of LLMs by exposing them to external knowledge sources. However, in the healthcare domain there is currently a lack of systematic understanding of which datasets, RAG methodologies and evaluation frameworks are available. This review aims to bridge this gap by assessing RAG-based approaches employed by LLMs in healthcare, focusing on the different steps of retrieval, augmentation and generation. Additionally, we identify the limitations, strengths and gaps in the existing literature. Our synthesis shows that 78.9% of studies used English datasets and 21.1% of the datasets are in Chinese. We find that a range of techniques are employed RAG-based LLMs in healthcare, including Naive RAG, Advanced RAG, and Modular RAG. Surprisingly, proprietary models such as GPT-3.5/4 are the most used for RAG applications in healthcare. We find that there is a lack of standardised evaluation frameworks for RAG-based applications. In addition, the majority of the studies do not assess or address ethical considerations related to RAG in healthcare. It is important to account for ethical challenges that are inherent when AI systems are implemented in the clinical setting. Lastly, we highlight the need for further research and development to ensure responsible and effective adoption of RAG in the medical domain.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1371/journal.pdig.0000877" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://doi.org/10.1371/journal.pdig.0000877" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1371/journal.pdig.0000877" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 3 of 4</p>
+  <h2>Graph Retrieval-Augmented Generation: A Survey</h2>
+  <p class="meta">Boci Peng, Yun Zhu, Yongchao Liu et al. · ACM Transactions on Information Systems · 2025</p>
+  <div class="chips">
+    <span class="chip"><b>206</b> citations</span>
+    <span class="chip"><b>103.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Topic Modeling</span><span class="chip soft">Information Retrieval and Search Behavior</span><span class="chip soft">Multimodal Machine Learning Applications</span>
+  </div>
+  <blockquote><span class="label">Key point</span>Additionally, we examine downstream tasks, application domains, evaluation methodologies, and industrial use cases of GraphRAG.</blockquote>
+  <details><summary>Show the abstract</summary><p>Recently, Retrieval-Augmented Generation (RAG) has achieved remarkable success in addressing the challenges of Large Language Models (LLMs) without necessitating retraining. By referencing an external knowledge base, RAG refines LLM outputs, effectively mitigating issues such as “hallucination,” lack of domain-specific knowledge, and outdated information. However, the complex structure of relationships among different entities in databases presents challenges for RAG systems. In response, GraphRAG leverages structural information across entities to enable more precise and comprehensive retrieval, capturing relational knowledge and facilitating more accurate, context-aware responses. Given the novelty and potential of GraphRAG, a systematic review of current technologies is imperative. This article provides the first comprehensive overview of GraphRAG methodologies. We formalize the GraphRAG workflow, encompassing Graph-Based Indexing, Graph-Guided Retrieval, and Graph-Enhanced Generation. We then outline the core technologies and training methods at each stage. Additionally, we examine downstream tasks, application domains, evaluation methodologies, and industrial use cases of GraphRAG. Finally, we explore future research directions to inspire further inquiries and advance progress in the field. In order to track recent progress, we set up a repository at https://github.com/pengboci/GraphRAG-Survey .</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1145/3777378" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://arxiv.org/pdf/2408.08921" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1145/3777378" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 4 of 4</p>
+  <h2>Improving large language model applications in biomedicine with retrieval-augmented generation: a systematic review, meta-analysis, and clinical development guidelines</h2>
+  <p class="meta">Siru Liu, Allison B. McCoy, Adam T. Wright · Journal of the American Medical Informatics Association · 2025</p>
+  <div class="chips">
+    <span class="chip"><b>198</b> citations</span>
+    <span class="chip"><b>99.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Artificial Intelligence in Healthcare and Education</span><span class="chip soft">Topic Modeling</span><span class="chip soft">Machine Learning in Healthcare</span>
+  </div>
+  <blockquote><span class="label">Key point</span>OBJECTIVE: The objectives of this study are to synthesize findings from recent research of retrieval-augmented generation (RAG) and large language models (LLMs) in biomedicine and provide clinical development guidelines to improve effectiveness.</blockquote>
+  <details><summary>Show the abstract</summary><p>OBJECTIVE: The objectives of this study are to synthesize findings from recent research of retrieval-augmented generation (RAG) and large language models (LLMs) in biomedicine and provide clinical development guidelines to improve effectiveness. MATERIALS AND METHODS: We conducted a systematic literature review and a meta-analysis. The report was created in adherence to the Preferred Reporting Items for Systematic Reviews and Meta-Analyses 2020 analysis. Searches were performed in 3 databases (PubMed, Embase, PsycINFO) using terms related to &quot;retrieval augmented generation&quot; and &quot;large language model,&quot; for articles published in 2023 and 2024. We selected studies that compared baseline LLM performance with RAG performance. We developed a random-effect meta-analysis model, using odds ratio as the effect size. RESULTS: Among 335 studies, 20 were included in this literature review. The pooled effect size was 1.35, with a 95% confidence interval of 1.19-1.53, indicating a statistically significant effect (P = .001). We reported clinical tasks, baseline LLMs, retrieval sources and strategies, as well as evaluation methods. DISCUSSION: Building on our literature review, we developed Guidelines for Unified Implementation and Development of Enhanced LLM Applications with RAG in Clinical Settings to inform clinical applications using RAG. CONCLUSION: Overall, RAG implementation showed a 1.35 odds ratio increase in performance compared to baseline LLMs. Future research should focus on (1) system-level enhancement: the combination of RAG and agent, (2) knowledge-level enhancement: deep integration of knowledge into LLM, and (3) integration-level enhancement: integrating RAG systems within electronic health records.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1093/jamia/ocaf008" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://academic.oup.com/jamia/advance-article-pdf/doi/10.1093/jamia/ocaf008/61442713/ocaf008.pdf" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1093/jamia/ocaf008" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">References</p>
+  <h2>Cite these papers</h2>
+  <ol class="refs"><li>Penghao Zhao, Hailin Zhang, Qinhan Yu et al. (2026). <i>Retrieval-Augmented Generation for AI-Generated Content: A Survey</i>. Data Science and Engineering. doi:10.1007/s41019-025-00335-5</li><li>Lameck Mbangula Amugongo, Pietro Mascheroni, Steven Brooks et al. (2025). <i>Retrieval augmented generation for large language models in healthcare: A systematic review</i>. PLOS Digital Health. doi:10.1371/journal.pdig.0000877</li><li>Boci Peng, Yun Zhu, Yongchao Liu et al. (2025). <i>Graph Retrieval-Augmented Generation: A Survey</i>. ACM Transactions on Information Systems. doi:10.1145/3777378</li><li>Siru Liu, Allison B. McCoy, Adam T. Wright (2025). <i>Improving large language model applications in biomedicine with retrieval-augmented generation: a systematic review, meta-analysis, and clinical development guidelines</i>. Journal of the American Medical Informatics Association. doi:10.1093/jamia/ocaf008</li></ol>
+  <div class="links">
+    <button class="button" id="copy-bib" type="button">Copy BibTeX</button>
+    <button class="button" id="download-bib" type="button">Download .bib</button>
+    <span id="copy-status" class="muted" aria-live="polite"></span>
+  </div>
+  <details><summary>Show the BibTeX</summary><pre id="bibtex">@article{zhao2026retrieval,
+  title = {{Retrieval-Augmented Generation for AI-Generated Content: A Survey}},
+  author = {Penghao Zhao and Hailin Zhang and Qinhan Yu and Zhengren Wang and Yunteng Geng and Fangcheng Fu and Ling Yang and Wentao Zhang and Jie Jiang and Bin Cui},
+  year = {2026},
+  journal = {Data Science and Engineering},
+  doi = {10.1007/s41019-025-00335-5},
+  url = {https://doi.org/10.1007/s41019-025-00335-5}
+}
+
+@article{amugongo2025retrieval,
+  title = {{Retrieval augmented generation for large language models in healthcare: A systematic review}},
+  author = {Lameck Mbangula Amugongo and Pietro Mascheroni and Steven Brooks and Stefan Doering and Jan Seidel},
+  year = {2025},
+  journal = {PLOS Digital Health},
+  doi = {10.1371/journal.pdig.0000877},
+  url = {https://doi.org/10.1371/journal.pdig.0000877}
+}
+
+@article{peng2025graph,
+  title = {{Graph Retrieval-Augmented Generation: A Survey}},
+  author = {Boci Peng and Yun Zhu and Yongchao Liu and Xiaohe Bo and Haizhou Shi and Chuntao Hong and Yan Zhang and Siliang Tang},
+  year = {2025},
+  journal = {ACM Transactions on Information Systems},
+  doi = {10.1145/3777378},
+  url = {https://doi.org/10.1145/3777378}
+}
+
+@article{liu2025improving,
+  title = {{Improving large language model applications in biomedicine with retrieval-augmented generation: a systematic review, meta-analysis, and clinical development guidelines}},
+  author = {Siru Liu and Allison B. McCoy and Adam T. Wright},
+  year = {2025},
+  journal = {Journal of the American Medical Informatics Association},
+  doi = {10.1093/jamia/ocaf008},
+  url = {https://doi.org/10.1093/jamia/ocaf008}
+}
+</pre></details>
+</section></main>
+<nav>
+  <button class="button" id="prev" type="button" aria-label="Previous slide">←</button>
+  <span id="counter"></span>
+  <button class="button" id="next" type="button" aria-label="Next slide">→</button>
+</nav>
+<script>
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  var current = 0;
+  function show(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach(function (slide, i) { slide.classList.toggle("active", i === current); });
+    document.getElementById("counter").textContent = (current + 1) + " / " + slides.length;
+    document.getElementById("progress").style.width = ((current + 1) / slides.length * 100) + "%";
+    history.replaceState(null, "", "#" + (current + 1));
+  }
+  document.getElementById("prev").onclick = function () { show(current - 1); };
+  document.getElementById("next").onclick = function () { show(current + 1); };
+  document.addEventListener("keydown", function (event) {
+    if (event.target.closest && event.target.closest("summary, input, textarea")) return;
+    if (["ArrowRight", "PageDown", " "].indexOf(event.key) >= 0) { event.preventDefault(); show(current + 1); }
+    if (["ArrowLeft", "PageUp"].indexOf(event.key) >= 0) { event.preventDefault(); show(current - 1); }
+    if (event.key === "Home") show(0);
+    if (event.key === "End") show(slides.length - 1);
+  });
+  var touchX = null;
+  document.addEventListener("touchstart", function (e) { touchX = e.touches[0].clientX; });
+  document.addEventListener("touchend", function (e) {
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 60) show(current + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  var bibtex = document.getElementById("bibtex").textContent;
+  var status = document.getElementById("copy-status");
+  document.getElementById("copy-bib").onclick = function () {
+    function done() { status.textContent = "Copied."; }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(bibtex).then(done, fallback);
+    } else { fallback(); }
+    function fallback() {
+      var area = document.createElement("textarea");
+      area.value = bibtex; document.body.appendChild(area); area.select();
+      try { document.execCommand("copy"); done(); } catch (e) { status.textContent = "Copy failed. Use 'Show the BibTeX'."; }
+      document.body.removeChild(area);
+    }
+  };
+  document.getElementById("download-bib").onclick = function () {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([bibtex], { type: "application/x-bibtex" }));
+    a.download = "research-briefing-retrieval-augmented-generation.bib"; a.click();
+  };
+
+  var start = parseInt(location.hash.slice(1), 10);
+  show(isNaN(start) ? 0 : start - 1);
+})();
+</script>
+</body>
+</html>

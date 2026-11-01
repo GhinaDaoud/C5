@@ -1,0 +1,59 @@
+Failure cases: each command calls a tool on server.py through MCP (stdio), with the fastmcp command line.
+Date: 2026-11-01 13:59
+
+Files in data/decks before the Action tool failures: 8
+
+=== Data tool: search_papers ===
+
+$ fastmcp call server.py search_papers topic=""
+[11/01/26 13:59:23] INFO     Starting MCP server 'Research     transport.py:241
+                             Briefing' with transport 'stdio'                  
+[11/01/26 13:59:23] Error calling tool 'search_papers'                         
+Error: The topic is empty. Give a research topic, for example 'retrieval augmented generation'.
+
+$ fastmcp call server.py search_papers topic="gaussian splatting" limit=100
+[11/01/26 13:59:28] INFO     Starting MCP server 'Research     transport.py:241
+                             Briefing' with transport 'stdio'                  
+[11/01/26 13:59:28] Error calling tool 'search_papers'                         
+Error: limit must be between 1 and 25. You gave 100.
+
+$ fastmcp call server.py search_papers topic="gaussian splatting" from_year=3000
+[11/01/26 13:59:34] INFO     Starting MCP server 'Research     transport.py:241
+                             Briefing' with transport 'stdio'                  
+[11/01/26 13:59:34] Error calling tool 'search_papers'                         
+Error: from_year must be between 1900 and 2026. You gave 3000.
+
+=== Action tool: create_research_deck ===
+
+$ fastmcp call server.py create_research_deck --input-json '{"title": "", "papers": []}'
+[11/01/26 13:59:39] INFO     Starting MCP server 'Research     transport.py:241
+                             Briefing' with transport 'stdio'                  
+[11/01/26 13:59:39] Error calling tool 'create_research_deck'                  
+Error: The deck title is empty. Give a title, for example 'Retrieval augmented generation'.
+
+$ fastmcp call server.py create_research_deck --input-json '{"title": "Gaussian splatting", "papers": [{"title": "3D Gaussian Splatting for Real-Time Radiance Field Rendering", "year": 2023}, {"title": "3D Gaussian Splatting for Real-Time Radiance Field Rendering", "year": 2023}]}'
+[11/01/26 13:59:44] INFO     Starting MCP server 'Research     transport.py:241
+                             Briefing' with transport 'stdio'                  
+[11/01/26 13:59:44] Error calling tool 'create_research_deck'                  
+Error: Paper 2 ('3D Gaussian Splatting for Real-Time Radiance Field Rendering') is in the list twice.
+
+Files in data/decks after the Action tool failures: 8  (nothing was saved)
+
+=== Orchestration tool: research_topic ===
+
+$ fastmcp call server.py research_topic topic="gaussian splatting" n=50
+[11/01/26 13:59:50] INFO     Starting MCP server 'Research     transport.py:241
+                             Briefing' with transport 'stdio'                  
+[11/01/26 13:59:50] Error calling tool 'research_topic'                        
+Error: n must be between 1 and 10. You gave 50.
+
+$ fastmcp call server.py research_topic topic="qzxv blorptastic flumphwidget"
+[11/01/26 13:59:55] INFO     Starting MCP server 'Research     transport.py:241
+                             Briefing' with transport 'stdio'                  
+{
+  "created": false,
+  "reason": "OpenAlex has no papers on 'qzxv blorptastic flumphwidget'. No deck was made. Try a broader topic or an earlier year.",
+  "deck": null,
+  "considered": 0,
+  "papers": []
+}

@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research briefing: LLM agents tool use</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6a64; --line: #dedcd3;
+  --accent: #2f5bd3; --accent-soft: #e6ecfb; --chip: #efeee8;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #151614; --panel: #1f201d; --text: #ecebe6; --muted: #a3a29b; --line: #34352f;
+          --accent: #8aa7ff; --accent-soft: #263055; --chip: #2a2b27; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text);
+       font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+.slide { position: absolute; inset: 0 0 64px 0; padding: 48px max(16px, calc((100vw - 1040px) / 2));
+         overflow-y: auto; opacity: 0; visibility: hidden; transform: translateX(24px);
+         transition: opacity .25s ease, transform .25s ease, visibility .25s; }
+.slide.active { opacity: 1; visibility: visible; transform: none; }
+.title-slide { display: flex; flex-direction: column; justify-content: center; }
+h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+h2 { font-size: clamp(24px, 3.4vw, 36px); line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 12px; }
+.kicker { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+          font-size: 13px; margin: 0 0 10px; }
+.lead { font-size: 22px; margin: 0 0 8px; }
+.muted, .meta { color: var(--muted); }
+.meta { margin: 0 0 18px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 28px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+        color: var(--muted); font-size: 14px; }
+.stat span { display: block; font-size: 26px; font-weight: 700; color: var(--text); }
+.two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; }
+.chart { width: 100%; height: auto; }
+.chart-label { fill: var(--text); font-size: 13px; }
+.chart-value { fill: var(--muted); font-size: 12px; }
+.chart-bar { fill: var(--accent); }
+.topics { list-style: none; padding: 0; margin: 0; }
+.topics li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.topics b { display: inline-block; min-width: 42px; color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { background: var(--chip); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+.chip.soft { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+blockquote { margin: 0 0 20px; padding: 18px 22px; background: var(--accent-soft); border-radius: 10px;
+             border-left: 4px solid var(--accent); font-size: 19px; }
+.label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+         color: var(--accent); margin-bottom: 6px; }
+details { margin: 0 0 20px; }
+summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+details p { color: var(--muted); max-width: 75ch; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px;
+      overflow-x: auto; font-size: 13px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 18px; }
+.button { display: inline-block; background: var(--panel); color: var(--text); border: 1px solid var(--line);
+          border-radius: 8px; padding: 8px 14px; font: inherit; font-size: 15px; text-decoration: none;
+          cursor: pointer; }
+.button:hover { border-color: var(--accent); color: var(--accent); }
+.refs li { margin-bottom: 8px; }
+nav { position: fixed; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center;
+      justify-content: center; gap: 16px; border-top: 1px solid var(--line); background: var(--bg); }
+nav .button { min-width: 44px; }
+#counter { min-width: 64px; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+#progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width .25s; }
+@media (max-width: 720px) {
+  .slide { padding-top: 28px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .slide, #progress { transition: none; } }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<main>
+<section class="slide title-slide">
+  <p class="kicker">Research briefing</p>
+  <h1>LLM agents tool use</h1>
+  <p class="lead">4 papers · 2024–2026 · 125 citations in total</p>
+  <p class="muted">Made on 31 October 2026 from OpenAlex data. Use ← → or the buttons below.</p>
+</section>
+<section class="slide">
+  <p class="kicker">At a glance</p>
+  <h2>The papers in this briefing</h2>
+  <div class="stats">
+    <div class="stat"><span>4</span>papers</div>
+    <div class="stat"><span>2024–2026</span>years</div>
+    <div class="stat"><span>125</span>citations</div>
+    <div class="stat"><span>3/4</span>free PDFs</div>
+  </div>
+  <div class="two-col">
+    <div><h3>Citations</h3><svg class="chart" viewBox="0 0 640 142" role="img" aria-label="Citations per paper"><text class="chart-label" x="0" y="21">1. LLM-Based Agents for Tool Learnin…</text><rect class="chart-bar" x="250" y="8" width="300" height="18" rx="3"><title>LLM-Based Agents for Tool Learning: A Survey: 59 citations</title></rect><text class="chart-value" x="558" y="21">59 · 2025</text><text class="chart-label" x="0" y="55">2. PrivacyAsst: Safeguarding User Pr…</text><rect class="chart-bar" x="250" y="42" width="320" height="18" rx="3"><title>PrivacyAsst: Safeguarding User Privacy in Tool-Using Large Language Model Agents: 63 citations</title></rect><text class="chart-value" x="578" y="55">63 · 2024</text><text class="chart-label" x="0" y="89">3. SoK: Agentic Skills -- Beyond Too…</text><rect class="chart-bar" x="250" y="76" width="10" height="18" rx="3"><title>SoK: Agentic Skills -- Beyond Tool Use in LLM Agents: 2 citations</title></rect><text class="chart-value" x="268" y="89">2 · 2026</text><text class="chart-label" x="0" y="123">4. Towards Verifiably Safe Tool Use…</text><rect class="chart-bar" x="250" y="110" width="5" height="18" rx="3"><title>Towards Verifiably Safe Tool Use for LLM Agents: 1 citations</title></rect><text class="chart-value" x="263" y="123">1 · 2026</text></svg></div>
+    <div><h3>Shared topics</h3>
+      <ul class="topics"><li><b>2/4</b> AI-based Problem Solving and Planning</li><li><b>2/4</b> Adversarial Robustness in Machine Learning</li><li><b>1/4</b> Topic Modeling</li><li><b>1/4</b> Natural Language Processing Techniques</li><li><b>1/4</b> Privacy-Preserving Technologies in Data</li><li><b>1/4</b> Cryptography and Data Security</li></ul>
+    </div>
+  </div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 1 of 4</p>
+  <h2>LLM-Based Agents for Tool Learning: A Survey</h2>
+  <p class="meta">Weikai Xu, Chengrui Huang, Shen Gao et al. · Data Science and Engineering · 2025</p>
+  <div class="chips">
+    <span class="chip"><b>59</b> citations</span>
+    <span class="chip"><b>29.5</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">AI-based Problem Solving and Planning</span><span class="chip soft">Topic Modeling</span><span class="chip soft">Natural Language Processing Techniques</span>
+  </div>
+  <blockquote><span class="label">Key point</span>To this end, we present a systematic investigation and comprehensive review of tool-learning agents in this paper.</blockquote>
+  <details><summary>Show the abstract</summary><p>Abstract Human beings capable of making and using tools can accomplish tasks far beyond their innate abilities, and this paradigm of integration with tools may not be limited to humans themselves. Recently, the large language model (LLM) has demonstrated immense potential across various fields with its unique planning and reasoning abilities. However, there are still many challenges beyond its capabilities due to deficiencies in its training data and inherent illusions. Thus, integrating LLMs and tools into tool learning agents has become a new emerging research direction. To this end, we present a systematic investigation and comprehensive review of tool-learning agents in this paper. We start by introducing the definition of the tool learning task for Agents and then illustrating the typical architecture of the tool-learning models. Since these tools are all defined by users, LLM does not know what tools there are and what their functions are. Thus, LLMs should first find appropriate tools and split the tool retrieval methods into two categories: training-based and non-training-based. To accurately complete the user task, it is important to decompose the task into several sub-tasks and execute them in the correct order. Following that, we introduce the tool planning methods and organize these works by whether they rely on the model’s inherent reasoning capabilities for planning or utilize external reasoning tools. Due to the rapid development of this field, we also introduce an emerging frontier direction: using multimodal tools for LLM. In addition, we compile current open-source benchmarks and evaluation metrics, focusing on their scale, composition, calculation methods, and assessment dimensions. Next, we introduce several application scenarios for the LLM-based tool learning methods. Finally, we discuss the safety and ethical issues involved in tool learning.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1007/s41019-025-00296-9" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://link.springer.com/content/pdf/10.1007/s41019-025-00296-9.pdf" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.1007/s41019-025-00296-9" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 2 of 4</p>
+  <h2>PrivacyAsst: Safeguarding User Privacy in Tool-Using Large Language Model Agents</h2>
+  <p class="meta">Xinyu Zhang, Huiyu Xu, Zhongjie Ba et al. · IEEE Transactions on Dependable and Secure Computing · 2024</p>
+  <div class="chips">
+    <span class="chip"><b>63</b> citations</span>
+    <span class="chip"><b>21.0</b> per year</span>
+    <span class="chip">No free PDF</span>
+    <span class="chip soft">Privacy-Preserving Technologies in Data</span><span class="chip soft">Cryptography and Data Security</span><span class="chip soft">Privacy, Security, and Data Protection</span>
+  </div>
+  <blockquote><span class="label">Key point</span>To tackle these challenges, we present PrivacyAsst, the first privacy-preserving framework tailored for tool-using LLM agents, encompassing two solutions for different application scenarios.</blockquote>
+  <details><summary>Show the abstract</summary><p>Swift advancements in large language model (LLM) technologies lead to widespread research and applications, particularly in integrating LLMs with auxiliary tools, known as tool-using LLM agents. However, amid user interactions, the transmission of private information to both LLMs and tools poses considerable privacy risks to users. In this paper, we delve into current privacy-preserving solutions for LLMs and outline three pivotal challenges for tool-using LLM agents: generalization to both open-source and closed-source LLMs and tools, compliance with privacy requirements, and applicability to unrestricted tasks. To tackle these challenges, we present PrivacyAsst, the first privacy-preserving framework tailored for tool-using LLM agents, encompassing two solutions for different application scenarios. First, we incorporate a homomorphic encryption scheme to ensure computational security guarantees for users as a safeguard against both open-source and closed-source LLMs and tools. Moreover, we propose a shuffling-based solution to broaden the framework&#x27;s applicability to unrestricted tasks. This solution employs an attribute-based forgery generative model and an attribute shuffling mechanism to craft privacy-preserving requests, effectively concealing individual inputs. Additionally, we introduce an innovative privacy concept,t-closeness in image data, for privacy compliance within this solution. Finally, we implement PrivacyAsst, accompanied by two case studies, demonstrating its effectiveness in advancing privacy-preserving artificial intelligence.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.1109/tdsc.2024.3372777" target="_blank" rel="noopener">Open the paper</a>
+    <a class="button" href="https://doi.org/10.1109/tdsc.2024.3372777" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 3 of 4</p>
+  <h2>SoK: Agentic Skills -- Beyond Tool Use in LLM Agents</h2>
+  <p class="meta">Yanna Jiang, Delong Li, Haiyu Deng et al. · arXiv (Cornell University) · 2026</p>
+  <div class="chips">
+    <span class="chip"><b>2</b> citations</span>
+    <span class="chip"><b>2.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Adversarial Robustness in Machine Learning</span><span class="chip soft">AI-based Problem Solving and Planning</span><span class="chip soft">Artificial Intelligence Applications</span>
+  </div>
+  <blockquote><span class="label">Key point</span>Agentic systems increasingly rely on reusable procedural capabilities, a.k.a., agentic skills, to execute long-horizon workflows reliably.</blockquote>
+  <details><summary>Show the abstract</summary><p>Agentic systems increasingly rely on reusable procedural capabilities, a.k.a., agentic skills, to execute long-horizon workflows reliably. These capabilities are callable modules that package procedural knowledge with explicit applicability conditions, execution policies, termination criteria, and reusable interfaces. Unlike one-off plans or atomic tool calls, skills operate (and often do well) across tasks. This paper maps the skill layer across the full lifecycle (discovery, practice, distillation, storage, composition, evaluation, and update) and introduces two complementary taxonomies. The first is a system-level set of seven design patterns capturing how skills are packaged and executed in practice, from metadata-driven progressive disclosure and executable code skills to self-evolving libraries and marketplace distribution. The second is an orthogonal representation \times scope taxonomy describing what skills are (natural language, code, policy, hybrid) and what environments they operate over (web, OS, software engineering, robotics). We analyze the security and governance implications of skill-based agents, covering supply-chain risks, prompt injection via skill payloads, and trust-tiered execution, grounded by a case study of the ClawHavoc campaign in which nearly 1{,}200 malicious skills infiltrated a major agent marketplace, exfiltrating API keys, cryptocurrency wallets, and browser credentials at scale. We further survey deterministic evaluation approaches, anchored by recent benchmark evidence that curated skills can substantially improve agent success rates while self-generated skills may degrade them. We conclude with open challenges toward robust, verifiable, and certifiable skills for real-world autonomous agents.</p></details>
+  <div class="links"><a class="button" href="http://arxiv.org/abs/2602.20867" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://arxiv.org/pdf/2602.20867" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.48550/arxiv.2602.20867" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">Paper 4 of 4</p>
+  <h2>Towards Verifiably Safe Tool Use for LLM Agents</h2>
+  <p class="meta">Aarya Mayurpalsingh Doshi, Yining Hong, Congying Xu et al. · arXiv (Cornell University) · 2026</p>
+  <div class="chips">
+    <span class="chip"><b>1</b> citations</span>
+    <span class="chip"><b>1.0</b> per year</span>
+    <span class="chip">Free PDF</span>
+    <span class="chip soft">Safety Systems Engineering in Autonomy</span><span class="chip soft">Access Control and Trust</span><span class="chip soft">Adversarial Robustness in Machine Learning</span>
+  </div>
+  <blockquote><span class="label">Key point</span>We propose a process that starts with applying System-Theoretic Process Analysis (STPA) to identify hazards in agent workflows, derive safety requirements, and formalize them as enforceable specifications on data flows and tool sequences.</blockquote>
+  <details><summary>Show the abstract</summary><p>Large language model (LLM)-based AI agents extend LLM capabilities by enabling access to tools such as data sources, APIs, search engines, code sandboxes, and even other agents. While this empowers agents to perform complex tasks, LLMs may invoke unintended tool interactions and introduce risks, such as leaking sensitive data or overwriting critical records, which are unacceptable in enterprise contexts. Current approaches to mitigate these risks, such as model-based safeguards, enhance agents&#x27; reliability but cannot guarantee system safety. Methods like information flow control (IFC) and temporal constraints aim to provide guarantees but often require extensive human annotation. We propose a process that starts with applying System-Theoretic Process Analysis (STPA) to identify hazards in agent workflows, derive safety requirements, and formalize them as enforceable specifications on data flows and tool sequences. To enable this, we introduce a capability-enhanced Model Context Protocol (MCP) framework that requires structured labels on capabilities, confidentiality, and trust level. Together, these contributions aim to shift LLM-based agent safety from ad hoc reliability fixes to proactive guardrails with formal guarantees, while reducing dependence on user confirmation and making autonomy a deliberate design choice.</p></details>
+  <div class="links"><a class="button" href="https://doi.org/10.48550/arxiv.2601.08012" target="_blank" rel="noopener">Open the paper</a><a class="button" href="https://doi.org/10.48550/arxiv.2601.08012" target="_blank" rel="noopener">PDF</a>
+    <a class="button" href="https://doi.org/10.48550/arxiv.2601.08012" target="_blank" rel="noopener">DOI</a></div>
+</section>
+<section class="slide">
+  <p class="kicker">References</p>
+  <h2>Cite these papers</h2>
+  <ol class="refs"><li>Weikai Xu, Chengrui Huang, Shen Gao et al. (2025). <i>LLM-Based Agents for Tool Learning: A Survey</i>. Data Science and Engineering. doi:10.1007/s41019-025-00296-9</li><li>Xinyu Zhang, Huiyu Xu, Zhongjie Ba et al. (2024). <i>PrivacyAsst: Safeguarding User Privacy in Tool-Using Large Language Model Agents</i>. IEEE Transactions on Dependable and Secure Computing. doi:10.1109/tdsc.2024.3372777</li><li>Yanna Jiang, Delong Li, Haiyu Deng et al. (2026). <i>SoK: Agentic Skills -- Beyond Tool Use in LLM Agents</i>. arXiv (Cornell University). doi:10.48550/arxiv.2602.20867</li><li>Aarya Mayurpalsingh Doshi, Yining Hong, Congying Xu et al. (2026). <i>Towards Verifiably Safe Tool Use for LLM Agents</i>. arXiv (Cornell University). doi:10.48550/arxiv.2601.08012</li></ol>
+  <div class="links">
+    <button class="button" id="copy-bib" type="button">Copy BibTeX</button>
+    <button class="button" id="download-bib" type="button">Download .bib</button>
+    <span id="copy-status" class="muted" aria-live="polite"></span>
+  </div>
+  <details><summary>Show the BibTeX</summary><pre id="bibtex">@article{xu2025based,
+  title = {{LLM-Based Agents for Tool Learning: A Survey}},
+  author = {Weikai Xu and Chengrui Huang and Shen Gao and Shuo Shang},
+  year = {2025},
+  journal = {Data Science and Engineering},
+  doi = {10.1007/s41019-025-00296-9},
+  url = {https://doi.org/10.1007/s41019-025-00296-9}
+}
+
+@article{zhang2024privacyasst,
+  title = {{PrivacyAsst: Safeguarding User Privacy in Tool-Using Large Language Model Agents}},
+  author = {Xinyu Zhang and Huiyu Xu and Zhongjie Ba and Zhibo Wang and Yuan Hong and Jian Liu and Zhan Qin and Kui Ren},
+  year = {2024},
+  journal = {IEEE Transactions on Dependable and Secure Computing},
+  doi = {10.1109/tdsc.2024.3372777},
+  url = {https://doi.org/10.1109/tdsc.2024.3372777}
+}
+
+@misc{jiang2026agentic,
+  title = {{SoK: Agentic Skills -- Beyond Tool Use in LLM Agents}},
+  author = {Yanna Jiang and Delong Li and Haiyu Deng and Baihe Ma and Xu Wang and Qin Wang and Guangsheng Yu},
+  year = {2026},
+  howpublished = {arXiv (Cornell University)},
+  doi = {10.48550/arxiv.2602.20867},
+  url = {http://arxiv.org/abs/2602.20867}
+}
+
+@misc{doshi2026towards,
+  title = {{Towards Verifiably Safe Tool Use for LLM Agents}},
+  author = {Aarya Mayurpalsingh Doshi and Yining Hong and Congying Xu and Eunsuk Kang and Alexandros Kapravelos and Christian Kästner},
+  year = {2026},
+  howpublished = {arXiv (Cornell University)},
+  doi = {10.48550/arxiv.2601.08012},
+  url = {https://doi.org/10.48550/arxiv.2601.08012}
+}
+</pre></details>
+</section></main>
+<nav>
+  <button class="button" id="prev" type="button" aria-label="Previous slide">←</button>
+  <span id="counter"></span>
+  <button class="button" id="next" type="button" aria-label="Next slide">→</button>
+</nav>
+<script>
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  var current = 0;
+  function show(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach(function (slide, i) { slide.classList.toggle("active", i === current); });
+    document.getElementById("counter").textContent = (current + 1) + " / " + slides.length;
+    document.getElementById("progress").style.width = ((current + 1) / slides.length * 100) + "%";
+    history.replaceState(null, "", "#" + (current + 1));
+  }
+  document.getElementById("prev").onclick = function () { show(current - 1); };
+  document.getElementById("next").onclick = function () { show(current + 1); };
+  document.addEventListener("keydown", function (event) {
+    if (event.target.closest && event.target.closest("summary, input, textarea")) return;
+    if (["ArrowRight", "PageDown", " "].indexOf(event.key) >= 0) { event.preventDefault(); show(current + 1); }
+    if (["ArrowLeft", "PageUp"].indexOf(event.key) >= 0) { event.preventDefault(); show(current - 1); }
+    if (event.key === "Home") show(0);
+    if (event.key === "End") show(slides.length - 1);
+  });
+  var touchX = null;
+  document.addEventListener("touchstart", function (e) { touchX = e.touches[0].clientX; });
+  document.addEventListener("touchend", function (e) {
+    if (touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 60) show(current + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  var bibtex = document.getElementById("bibtex").textContent;
+  var status = document.getElementById("copy-status");
+  document.getElementById("copy-bib").onclick = function () {
+    function done() { status.textContent = "Copied."; }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(bibtex).then(done, fallback);
+    } else { fallback(); }
+    function fallback() {
+      var area = document.createElement("textarea");
+      area.value = bibtex; document.body.appendChild(area); area.select();
+      try { document.execCommand("copy"); done(); } catch (e) { status.textContent = "Copy failed. Use 'Show the BibTeX'."; }
+      document.body.removeChild(area);
+    }
+  };
+  document.getElementById("download-bib").onclick = function () {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([bibtex], { type: "application/x-bibtex" }));
+    a.download = "research-briefing-llm-agents-tool-use.bib"; a.click();
+  };
+
+  var start = parseInt(location.hash.slice(1), 10);
+  show(isNaN(start) ? 0 : start - 1);
+})();
+</script>
+</body>
+</html>

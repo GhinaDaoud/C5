@@ -10,7 +10,7 @@ The tools are in an **MCP server** (`server.py`, made with FastMCP).
 The agent (`agent.py`, made with the OpenAI Agents SDK) is the **MCP Host**.
 The agent does not contain tool code. It starts the server, gets the list of tools, and lets the model call them through MCP.
 
-The reflection is in [REFLECTION.txt](REFLECTION.txt).
+The Part 1 summary is in [SUMMARY.md](SUMMARY.md). The reflection is in [REFLECTION.txt](REFLECTION.txt).
 
 ## Demo video
 
@@ -59,7 +59,9 @@ C5/
 ├── tests/test_tools.py  # 20 pytest tests, through a real MCP client
 ├── pytest.ini
 ├── requirements.txt
+├── SUMMARY.md           # Part 1: the summary of the MCP article and of the Fetch server
 ├── REFLECTION.txt       # The reflection (assignment deliverable)
+├── results/             # Saved test results, failure cases, and an example briefing (Gaussian splatting)
 ├── .env                 # API key and settings (not in Git)
 └── data/decks/          # The decks and .bib files (made when a deck is made; not in Git)
 ```
@@ -148,6 +150,14 @@ pytest -v
 The tests call the tools through an in-memory MCP client, as the agent does.
 OpenAlex is fake in the tests. Thus, the tests do not need the network, and they always give the same result.
 The decks go to a temporary folder.
+
+The saved results are in the `results/` folder:
+
+| File | What it contains |
+|---|---|
+| `pytest_results.txt` | The output of `pytest -v` (20 tests). |
+| `failure_cases.txt` | 7 failure cases. Each one calls a tool on `server.py` through MCP with the `fastmcp` command line. |
+| `gaussian_splatting/` | A real `research_topic` run on "gaussian splatting": the result data (JSON), the deck, and the `.bib` file. |
 
 | Tool | Tests |
 |---|---|
