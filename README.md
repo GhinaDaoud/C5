@@ -14,7 +14,9 @@ The Part 1 summary is in [SUMMARY.md](SUMMARY.md). The reflection is in [REFLECT
 
 ## Demo video
 
-recorded through WebEx [will add link when the platform makes it available from cloud]
+Webex meeting recording: Ghina Daoud (Student)'s meeting 
+Recording link: https://aub.webex.com/aub/ldr.php?RCID=f91b58c80dfe4d4f0b39ef22ca93db90
+Password: qXZhsr?2
 
 ## The three tools
 
